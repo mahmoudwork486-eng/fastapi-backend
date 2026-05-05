@@ -1,8 +1,10 @@
-with open("main.py", "w") as f:
-    f.write("""
 from fastapi import FastAPI
+import pickle
 
 app = FastAPI()
+
+# تحميل الموديل مرة واحدة
+model = pickle.load(open("spam_model.pkl", "rb"))
 
 @app.get("/")
 def home():
@@ -10,5 +12,6 @@ def home():
 
 @app.post("/predict")
 def predict(data: dict):
-    return {"result": "ok"}
-""")
+    text = data["text"]
+    prediction = model.predict([text])[0]
+    return {"result": int(prediction)}
