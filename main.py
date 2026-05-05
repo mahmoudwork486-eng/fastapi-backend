@@ -3,8 +3,8 @@ import pickle
 
 app = FastAPI()
 
-# تحميل الموديل مرة واحدة
 model = pickle.load(open("spam_model.pkl", "rb"))
+vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
 
 @app.get("/")
 def home():
@@ -13,5 +13,6 @@ def home():
 @app.post("/predict")
 def predict(data: dict):
     text = data["text"]
-    prediction = model.predict([text])[0]
+    text_vector = vectorizer.transform([text])
+    prediction = model.predict(text_vector)[0]
     return {"result": int(prediction)}
