@@ -1,8 +1,10 @@
-with open("main.py", "w") as f:
-    f.write("""
 from fastapi import FastAPI
+import joblib
 
 app = FastAPI()
+
+# تحميل الموديل
+model = joblib.load("spam_model.pkl")
 
 @app.get("/")
 def home():
@@ -10,5 +12,6 @@ def home():
 
 @app.post("/predict")
 def predict(data: dict):
-    return {"result": "ok"}
-""")
+    text = data["text"]
+    prediction = model.predict([text])[0]
+    return {"result": int(prediction)}
